@@ -58,5 +58,14 @@ def create_cat():
     return jsonify(cats), 201
 
 
+@app.route('/api/cats/<int:id>', methods=['GET'])
+def get_one_cat(id):
+    global cats
+    for cat in cats:
+        if cat['id'] == id:
+            return jsonify(cat), 200
+    return abort(404, 'Cat not found')
+
+
 if __name__ == '__main__':
     app.run(debug=True)
