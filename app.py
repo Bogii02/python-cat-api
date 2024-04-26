@@ -9,7 +9,7 @@ CREATE_CATS_TABLE = (
 )
 
 INSERT_CAT = (
-    "INSERT INTO cats (name, age, color) VALUES (%s, %s, %s);"
+    "INSERT INTO cats (name, age, color) VALUES (%s, %s, %s) RETURNING id;"
 )
 
 
@@ -34,7 +34,7 @@ def create_cat():
 
     for key in fields:
         if key not in data:
-            return abort(400, f'Missing required field: {key}')
+            abort(400, f'Missing required field: {key}')
 
     for key in data.keys():
         if key not in fields:
@@ -55,7 +55,6 @@ def create_cat():
                 "color": data['color']
             }
             return jsonify(cat_dict), 201
-
     except Exception as e:
         abort(500, f'Error getting cats: {str(e)}')
 
