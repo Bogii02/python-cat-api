@@ -12,6 +12,9 @@ INSERT_CAT = (
     "INSERT INTO cats (name, age, color) VALUES (%s, %s, %s) RETURNING id;"
 )
 
+GET_ALL_CATS = (
+    "SELECT * FROM cats;"
+)
 
 load_dotenv()
 
@@ -56,7 +59,28 @@ def create_cat():
             }
             return jsonify(cat_dict), 201
     except Exception as e:
-        abort(500, f'Error getting cats: {str(e)}')
+        abort(500, f'Error adding cats: {str(e)}')
+
+
+@app.route('/api/cats')
+def get_all_cats():
+    try:
+        with connection:
+            with connection.cursor() as cursor:
+                cursor.execute(GET_ALL_CATS)
+                cats = cursor.fetchall()
+        cats_data = []
+        for cat in cats:
+            cat_dict = {
+                "id": cat[0],
+                "name": cat[1],
+                "age": cat[2],
+                "color": cat[3]
+            }
+            cats_data.append(cat_dict)
+            return jsonify(cats_data), 200
+    except Exception as e:
+        abort(500, f'Error adding cats: {str(e)}')
 
 
 if __name__ == '__main__':
