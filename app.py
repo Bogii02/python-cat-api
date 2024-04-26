@@ -3,6 +3,7 @@ import os
 import psycopg2
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request, abort
+from werkzeug.exceptions import NotFound
 
 CREATE_CATS_TABLE = (
     "CREATE TABLE IF NOT EXISTS cats (id SERIAL PRIMARY KEY, name VARCHAR(50), age INTEGER, color VARCHAR(50));"
@@ -14,6 +15,14 @@ INSERT_CAT = (
 
 GET_ALL_CATS = (
     "SELECT * FROM cats;"
+)
+
+SELECT_CAT_BY_ID = (
+    "SELECT * FROM cats WHERE id = %s;"
+)
+
+DELETE_CAT_BY_ID = (
+    "DELETE FROM cats WHERE id = %s;"
 )
 
 load_dotenv()
@@ -58,6 +67,7 @@ def create_cat():
                 "color": data['color']
             }
             return jsonify(cat_dict), 201
+
     except Exception as e:
         abort(500, f'Error adding cats: {str(e)}')
 
@@ -69,7 +79,9 @@ def get_all_cats():
             with connection.cursor() as cursor:
                 cursor.execute(GET_ALL_CATS)
                 cats = cursor.fetchall()
+
         cats_data = []
+
         for cat in cats:
             cat_dict = {
                 "id": cat[0],
@@ -78,9 +90,33 @@ def get_all_cats():
                 "color": cat[3]
             }
             cats_data.append(cat_dict)
-            return jsonify(cats_data), 200
+
+        return jsonify(cats_data), 200
+
     except Exception as e:
         abort(500, f'Error adding cats: {str(e)}')
+
+
+# should I send back 204?
+@app.route('/api/cats/<int:id>', methods=['DELETE'])
+def delete_one_cat_by_id(id):
+    try:
+        with connection:
+            with connection.cursor() as cursor:
+                cursor.execute(SELECT_CAT_BY_ID, (id,))
+                cat = cursor.fetchone()
+
+                if cat:
+                    cursor.execute(DELETE_CAT_BY_ID, (id,))
+                    return '', 204
+                else:
+                    raise NotFound()
+
+    except NotFound as e:
+        abort(404, f'There is no cat with id: {id}.\n {str(e)}')
+
+    except Exception as e:
+        abort(500, f'Error deleting cat: {str(e)}')
 
 
 if __name__ == '__main__':
