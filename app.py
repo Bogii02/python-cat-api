@@ -69,7 +69,7 @@ def create_cat():
             return jsonify(cat_dict), 201
 
     except Exception as e:
-        abort(500, f'Error adding cats: {str(e)}')
+        abort(500, f'Error getting cats: {str(e)}')
 
 
 @app.route('/api/cats')
@@ -94,7 +94,7 @@ def get_all_cats():
         return jsonify(cats_data), 200
 
     except Exception as e:
-        abort(500, f'Error adding cats: {str(e)}')
+        abort(500, f'Error adding cat: {str(e)}')
 
 
 # should I send back 204?
@@ -117,6 +117,32 @@ def delete_one_cat_by_id(id):
 
     except Exception as e:
         abort(500, f'Error deleting cat: {str(e)}')
+
+
+@app.route('/api/cats/<int:id>', methods=['GET'])
+def get_one_cat_by_id(id):
+    try:
+        with connection:
+            with connection.cursor() as cursor:
+                cursor.execute(SELECT_CAT_BY_ID, (id,))
+                cat = cursor.fetchone()
+
+            if cat:
+                cat_dict = {
+                    "id": cat[0],
+                    "name": cat[1],
+                    "age": cat[2],
+                    "color": cat[3]
+                }
+                return jsonify(cat_dict), 200
+            else:
+                raise NotFound()
+
+    except NotFound as e:
+        abort(404, f'There is no cat with id: {id}.\n {str(e)}')
+
+    except Exception as e:
+        abort(500, f'Error getting cat: {str(e)}')
 
 
 if __name__ == '__main__':
