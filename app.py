@@ -21,9 +21,6 @@ SELECT_CAT_BY_ID = (
     "SELECT * FROM cats WHERE id = %s;"
 )
 
-DELETE_CAT_BY_ID = (
-    "DELETE FROM cats WHERE id = %s;"
-)
 
 load_dotenv()
 
@@ -100,6 +97,10 @@ def get_all_cats():
 # should I send back 204?
 @app.route('/api/cats/<int:id>', methods=['DELETE'])
 def delete_one_cat_by_id(id):
+    delete_cat_by_id = (
+        "DELETE FROM cats WHERE id = %s;"
+    )
+
     try:
         with connection:
             with connection.cursor() as cursor:
@@ -107,7 +108,7 @@ def delete_one_cat_by_id(id):
                 cat = cursor.fetchone()
 
                 if cat:
-                    cursor.execute(DELETE_CAT_BY_ID, (id,))
+                    cursor.execute(delete_cat_by_id, (id,))
                     return '', 204
                 else:
                     raise NotFound()
