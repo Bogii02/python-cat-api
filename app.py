@@ -5,12 +5,6 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify, request, abort
 from werkzeug.exceptions import NotFound
 
-
-
-GET_ALL_CATS = (
-    "SELECT * FROM cats;"
-)
-
 SELECT_CAT_BY_ID = (
     "SELECT * FROM cats WHERE id = %s;"
 )
@@ -33,11 +27,11 @@ def hello():
 # should I make it into 1 function with an elif?
 @app.route('/api/cats', methods=['POST'])
 def create_cat():
-    create_cats_table = (
+    create_cats_table_query = (
         "CREATE TABLE IF NOT EXISTS cats (id SERIAL PRIMARY KEY, name VARCHAR(50), age INTEGER, color VARCHAR(50));"
     )
 
-    insert_cat = (
+    insert_cat_query = (
         "INSERT INTO cats (name, age, color) VALUES (%s, %s, %s) RETURNING id;"
     )
 
@@ -54,8 +48,8 @@ def create_cat():
     try:
         with connection:
             with connection.cursor() as cursor:
-                cursor.execute(create_cats_table)
-                cursor.execute(insert_cat, (data['name'], data['age'], data['color']))
+                cursor.execute(create_cats_table_query)
+                cursor.execute(insert_cat_query, (data['name'], data['age'], data['color']))
                 cat_id = cursor.fetchone()[0]
 
         if cat_id:
@@ -73,10 +67,14 @@ def create_cat():
 
 @app.route('/api/cats')
 def get_all_cats():
+    get_all_cats_query = (
+        "SELECT * FROM cats;"
+    )
+
     try:
         with connection:
             with connection.cursor() as cursor:
-                cursor.execute(GET_ALL_CATS)
+                cursor.execute(get_all_cats_query)
                 cats = cursor.fetchall()
 
         cats_data = []
@@ -99,7 +97,7 @@ def get_all_cats():
 # should I send back 204?
 @app.route('/api/cats/<int:id>', methods=['DELETE'])
 def delete_one_cat_by_id(id):
-    delete_cat_by_id = (
+    delete_cat_by_id_query = (
         "DELETE FROM cats WHERE id = %s;"
     )
 
@@ -110,7 +108,7 @@ def delete_one_cat_by_id(id):
                 cat = cursor.fetchone()
 
                 if cat:
-                    cursor.execute(delete_cat_by_id, (id,))
+                    cursor.execute(delete_cat_by_id_query, (id,))
                     return '', 204
                 else:
                     raise NotFound()
