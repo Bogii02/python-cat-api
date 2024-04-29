@@ -5,13 +5,7 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify, request, abort
 from werkzeug.exceptions import NotFound
 
-CREATE_CATS_TABLE = (
-    "CREATE TABLE IF NOT EXISTS cats (id SERIAL PRIMARY KEY, name VARCHAR(50), age INTEGER, color VARCHAR(50));"
-)
 
-INSERT_CAT = (
-    "INSERT INTO cats (name, age, color) VALUES (%s, %s, %s) RETURNING id;"
-)
 
 GET_ALL_CATS = (
     "SELECT * FROM cats;"
@@ -39,6 +33,14 @@ def hello():
 # should I make it into 1 function with an elif?
 @app.route('/api/cats', methods=['POST'])
 def create_cat():
+    create_cats_table = (
+        "CREATE TABLE IF NOT EXISTS cats (id SERIAL PRIMARY KEY, name VARCHAR(50), age INTEGER, color VARCHAR(50));"
+    )
+
+    insert_cat = (
+        "INSERT INTO cats (name, age, color) VALUES (%s, %s, %s) RETURNING id;"
+    )
+
     data = request.json
 
     for key in FIELDS:
@@ -52,8 +54,8 @@ def create_cat():
     try:
         with connection:
             with connection.cursor() as cursor:
-                cursor.execute(CREATE_CATS_TABLE)
-                cursor.execute(INSERT_CAT, (data['name'], data['age'], data['color']))
+                cursor.execute(create_cats_table)
+                cursor.execute(insert_cat, (data['name'], data['age'], data['color']))
                 cat_id = cursor.fetchone()[0]
 
         if cat_id:
