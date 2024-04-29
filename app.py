@@ -31,6 +31,8 @@ app = Flask(__name__)
 url = os.getenv("DATABASE_URL")
 connection = psycopg2.connect(url)
 
+FIELDS = ('name', 'age', 'color')
+
 
 @app.route('/')
 def hello():
@@ -40,16 +42,15 @@ def hello():
 # should I make it into 1 function with an elif?
 @app.route('/api/cats', methods=['POST'])
 def create_cat():
-    fields = ('name', 'age', 'color')
 
     data = request.json
 
-    for key in fields:
+    for key in FIELDS:
         if key not in data:
             abort(400, f'Missing required field: {key}')
 
     for key in data.keys():
-        if key not in fields:
+        if key not in FIELDS:
             abort(400, f'Unexpected field: {key}')
 
     try:
