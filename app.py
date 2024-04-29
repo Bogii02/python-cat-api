@@ -39,7 +39,6 @@ def hello():
 # should I make it into 1 function with an elif?
 @app.route('/api/cats', methods=['POST'])
 def create_cat():
-
     data = request.json
 
     for key in FIELDS:
@@ -89,7 +88,7 @@ def get_all_cats():
             }
             cats_data.append(cat_dict)
 
-        return jsonify(cats_data), 200
+        return jsonify({"cats": cats_data}), 200
 
     except Exception as e:
         abort(500, f'Error adding cat: {str(e)}')
@@ -147,5 +146,44 @@ def get_one_cat_by_id(id):
         abort(500, f'Error getting cat: {str(e)}')
 
 
+@app.route('/api/cats/<int:id>', methods=['PATCH'])
+def update_cat(id):
+    update_cat_query = (
+        "UPDATE cats SET name=%s, age=%s, color=%s WHERE id=%s;"
+    )
+
+    data = request.json
+
+    for key in data.keys():
+        if key == 'id':
+            abort(403, f'You do not have access to modify field: {key}.')
+        if key not in FIELDS:
+            abort(400, f'Unexpected field: {key}.')
+
+    try:
+        with connection:
+            with connection.cursor() as cursor:
+                cursor.execute(update_cat_query, (data['name'], data['age'], data['color'], id))
+                cursor.execute(SELECT_CAT_BY_ID, (id,))
+                cat = cursor.fetchone()
+
+                if cat:
+                    cat_dict = {
+                        "id": cat[0],
+                        "name": cat[1],
+                        "age": cat[2],
+                        "color": cat[3]
+                    }
+                    return jsonify(cat_dict), 200
+                else:
+                    raise NotFound()
+
+    except NotFound as e:
+        abort(404, f'There is no cat with id: {id}.\n {str(e)}')
+
+    except Exception as e:
+        abort(500, f'Error getting cat: {str(e)}')
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
