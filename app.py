@@ -1,14 +1,15 @@
 import os
 
 import psycopg2
+import werkzeug.exceptions
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request, abort
-from werkzeug.exceptions import NotFound
+
+import utils
 
 SELECT_CAT_BY_ID = (
     "SELECT * FROM cats WHERE id = %s;"
 )
-
 
 load_dotenv()
 
@@ -110,11 +111,6 @@ def delete_one_cat_by_id(id):
                 if cat:
                     cursor.execute(delete_cat_by_id_query, (id,))
                     return '', 204
-                else:
-                    raise NotFound()
-
-    except NotFound as e:
-        abort(404, f'There is no cat with id: {id}.\n {str(e)}')
 
     except Exception as e:
         abort(500, f'Error deleting cat: {str(e)}')
@@ -136,11 +132,6 @@ def get_one_cat_by_id(id):
                     "color": cat[3]
                 }
                 return jsonify(cat_dict), 200
-            else:
-                raise NotFound()
-
-    except NotFound as e:
-        abort(404, f'There is no cat with id: {id}.\n {str(e)}')
 
     except Exception as e:
         abort(500, f'Error getting cat: {str(e)}')
@@ -175,14 +166,27 @@ def update_cat(id):
                         "color": cat[3]
                     }
                     return jsonify(cat_dict), 200
-                else:
-                    raise NotFound()
-
-    except NotFound as e:
-        abort(404, f'There is no cat with id: {id}.\n {str(e)}')
 
     except Exception as e:
         abort(500, f'Error getting cat: {str(e)}')
+
+
+@app.errorhandler(werkzeug.exceptions.BadRequest)
+def handle_bad_request_error(error):
+    response_body = utils.create_error_message("invalid input", error)
+    return response_body, 400
+
+
+@app.errorhandler(werkzeug.exceptions.NotFound)
+def handle_not_found_error(error):
+    response_body = utils.create_error_message("data could not be found", error)
+    return response_body, 404
+
+
+@app.errorhandler(werkzeug.exceptions.InternalServerError)
+def handle_internal_server_error(error):
+    response_body = utils.create_error_message("failed to establish a connection with the database", error)
+    return response_body, 500
 
 
 if __name__ == '__main__':
