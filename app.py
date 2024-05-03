@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify, request, abort
 
 import utils
+import data_manager
 
 SELECT_CAT_BY_ID = (
     "SELECT * FROM cats WHERE id = %s;"
@@ -68,31 +69,8 @@ def create_cat():
 
 @app.route('/api/cats')
 def get_all_cats():
-    get_all_cats_query = (
-        "SELECT * FROM cats;"
-    )
-
-    try:
-        with connection:
-            with connection.cursor() as cursor:
-                cursor.execute(get_all_cats_query)
-                cats = cursor.fetchall()
-
-        cats_data = []
-
-        for cat in cats:
-            cat_dict = {
-                "id": cat[0],
-                "name": cat[1],
-                "age": cat[2],
-                "color": cat[3]
-            }
-            cats_data.append(cat_dict)
-
-        return jsonify({"cats": cats_data}), 200
-
-    except Exception as e:
-        abort(500, f'Error adding cat: {str(e)}')
+    cats = data_manager.get_all_cats()
+    return jsonify(cats), 200
 
 
 # should I send back 204?
