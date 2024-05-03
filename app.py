@@ -5,8 +5,8 @@ import werkzeug.exceptions
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request, abort
 
-import utils
 import data_manager
+import utils
 
 SELECT_CAT_BY_ID = (
     "SELECT * FROM cats WHERE id = %s;"
@@ -26,17 +26,8 @@ def hello():
     return 'Welcome here!'
 
 
-# should I make it into 1 function with an elif?
 @app.route('/api/cats', methods=['POST'])
 def create_cat():
-    create_cats_table_query = (
-        "CREATE TABLE IF NOT EXISTS cats (id SERIAL PRIMARY KEY, name VARCHAR(50), age INTEGER, color VARCHAR(50));"
-    )
-
-    insert_cat_query = (
-        "INSERT INTO cats (name, age, color) VALUES (%s, %s, %s) RETURNING id;"
-    )
-
     data = request.json
 
     for key in FIELDS:
@@ -47,24 +38,11 @@ def create_cat():
         if key not in FIELDS:
             abort(400, f'Unexpected field: {key}')
 
-    try:
-        with connection:
-            with connection.cursor() as cursor:
-                cursor.execute(create_cats_table_query)
-                cursor.execute(insert_cat_query, (data['name'], data['age'], data['color']))
-                cat_id = cursor.fetchone()[0]
+    data_manager.create_db_table()
 
-        if cat_id:
-            cat_dict = {
-                "id": cat_id,
-                "name": data['name'],
-                "age": data['age'],
-                "color": data['color']
-            }
-            return jsonify(cat_dict), 201
+    cat = data_manager.create_cat(data)
 
-    except Exception as e:
-        abort(500, f'Error getting cats: {str(e)}')
+    return jsonify(cat), 201
 
 
 @app.route('/api/cats')
