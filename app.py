@@ -51,25 +51,16 @@ def get_all_cats():
     return jsonify(cats), 200
 
 
-# should I send back 204?
 @app.route('/api/cats/<int:id>', methods=['DELETE'])
 def delete_one_cat_by_id(id):
-    delete_cat_by_id_query = (
-        "DELETE FROM cats WHERE id = %s;"
-    )
+    cat = data_manager.get_cat_by_id(id)
 
-    try:
-        with connection:
-            with connection.cursor() as cursor:
-                cursor.execute(SELECT_CAT_BY_ID, (id,))
-                cat = cursor.fetchone()
+    if cat is None:
+        abort(404, f'Cat with id: {id} was not found')
+    else:
+        data_manager.delete_cat_by_id(id)
 
-                if cat:
-                    cursor.execute(delete_cat_by_id_query, (id,))
-                    return '', 204
-
-    except Exception as e:
-        abort(500, f'Error deleting cat: {str(e)}')
+    return '', 204
 
 
 @app.route('/api/cats/<int:id>', methods=['GET'])

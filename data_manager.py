@@ -25,7 +25,7 @@ def create_cat(cursor, json_of_cat):
 def get_all_cats(cursor):
     cursor.execute("""
                     SELECT *
-                    FROM cats
+                    FROM cats;
                     """)
     return_value = cursor.fetchall()
     return {'cats': return_value}
@@ -41,3 +41,13 @@ def get_cat_by_id(cursor, id):
                    {"id": id})
     return_value = cursor.fetchone()
     return return_value
+
+
+@database.connection_handler
+def delete_cat_by_id(cursor, id):
+    cursor.execute("""
+                    DELETE
+                    FROM cats
+                    WHERE id = %(id)s;
+                    """,
+                   {"id": id})
