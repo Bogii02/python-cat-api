@@ -78,7 +78,7 @@ def update_cat(id):
     else:
         updated_cat = data_manager.update_cat_by_id(data, id)
 
-    return updated_cat, 200
+    return jsonify(updated_cat), 200
 
 
 @app.errorhandler(werkzeug.exceptions.BadRequest)
