@@ -74,23 +74,12 @@ def delete_one_cat_by_id(id):
 
 @app.route('/api/cats/<int:id>', methods=['GET'])
 def get_one_cat_by_id(id):
-    try:
-        with connection:
-            with connection.cursor() as cursor:
-                cursor.execute(SELECT_CAT_BY_ID, (id,))
-                cat = cursor.fetchone()
+    cat = data_manager.get_cat_by_id(id)
 
-            if cat:
-                cat_dict = {
-                    "id": cat[0],
-                    "name": cat[1],
-                    "age": cat[2],
-                    "color": cat[3]
-                }
-                return jsonify(cat_dict), 200
+    if cat is None:
+        abort(404, f'Cat with id: {id} was not found')
 
-    except Exception as e:
-        abort(500, f'Error getting cat: {str(e)}')
+    return jsonify(cat), 200
 
 
 @app.route('/api/cats/<int:id>', methods=['PATCH'])
@@ -146,4 +135,4 @@ def handle_internal_server_error(error):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
