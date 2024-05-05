@@ -51,3 +51,20 @@ def delete_cat_by_id(cursor, id):
                     WHERE id = %(id)s;
                     """,
                    {"id": id})
+
+
+@database.connection_handler
+def update_cat_by_id(cursor, json_of_cat_update, id):
+    cursor.execute("""
+                    UPDATE cats
+                    SET name = %(name)s, age = %(age)s, color = %(color)s
+                    WHERE id = %(id)s
+                    RETURNING *;
+                    """,
+                   {"name": json_of_cat_update["name"],
+                    "age": json_of_cat_update["age"],
+                    "color": json_of_cat_update["color"],
+                    "id": id})
+
+    return_value = cursor.fetchone()
+    return return_value
