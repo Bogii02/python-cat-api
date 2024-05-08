@@ -1,6 +1,8 @@
 import copy
 import database
 
+# execute method avoids sql injection
+
 
 @database.connection_handler
 def create_db_table_if_not_exists(cursor):
@@ -18,8 +20,15 @@ def create_cat(cursor, json_of_cat):
                     RETURNING *;
                     """,
                    json_of_cat)
-    return_value = cursor.fetchall()
-    return return_value
+    return_value = cursor.fetchone()
+
+    cat_dict = {
+        "id": return_value[0],
+        "name": return_value[1],
+        "age": return_value[2],
+        "color": return_value[3]
+    }
+    return cat_dict
 
 
 @database.connection_handler
@@ -52,14 +61,7 @@ def get_cat_by_id(cursor, id):
                     """,
                    {"id": id})
     return_value = cursor.fetchone()
-    cat_dict = {
-        "id": return_value[0],
-        "name": return_value[1],
-        "age": return_value[2],
-        "color": return_value[3]
-    }
-
-    return {'cat': cat_dict}
+    return return_value
 
 
 @database.connection_handler
@@ -70,6 +72,10 @@ def delete_cat_by_id(cursor, id):
                     WHERE id = %(id)s;
                     """,
                    {"id": id})
+
+
+# **dictionary unpacking
+# dictionary comprehension
 
 
 @database.connection_handler
