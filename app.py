@@ -13,6 +13,8 @@ FIELDS = ('name', 'age', 'color')
 def hello():
     return 'Welcome here!'
 
+# new module for request check
+
 
 @app.route('/api/cats', methods=['POST'])
 def create_cat():
@@ -26,7 +28,7 @@ def create_cat():
         if key not in FIELDS:
             abort(400, f'Unexpected field: {key}')
 
-    data_manager.create_db_table()
+    data_manager.create_db_table_if_not_exists()
     cat = data_manager.create_cat(data)
 
     return jsonify(cat), 201
@@ -78,7 +80,9 @@ def update_cat(id):
     else:
         updated_cat = data_manager.update_cat_by_id(data, id)
 
-    return jsonify(updated_cat), 200
+        return jsonify(updated_cat), 200
+
+# do not use werkzeug
 
 
 @app.errorhandler(werkzeug.exceptions.BadRequest)

@@ -1,8 +1,9 @@
+import copy
 import database
 
 
 @database.connection_handler
-def create_db_table(cursor):
+def create_db_table_if_not_exists(cursor):
     cursor.execute("""
                     CREATE TABLE IF NOT EXISTS cats
                         (id SERIAL PRIMARY KEY, name VARCHAR(50), age INTEGER, color VARCHAR(50));
@@ -28,7 +29,18 @@ def get_all_cats(cursor):
                     FROM cats;
                     """)
     return_value = cursor.fetchall()
-    return {'cats': return_value}
+
+    cats_list = []
+    for cat in return_value:
+        cat_dict = {
+            "id": cat[0],
+            "name": cat[1],
+            "age": cat[2],
+            "color": cat[3]
+        }
+        cats_list.append(cat_dict)
+
+    return {'cats': cats_list}
 
 
 @database.connection_handler
@@ -40,7 +52,14 @@ def get_cat_by_id(cursor, id):
                     """,
                    {"id": id})
     return_value = cursor.fetchone()
-    return return_value
+    cat_dict = {
+        "id": return_value[0],
+        "name": return_value[1],
+        "age": return_value[2],
+        "color": return_value[3]
+    }
+
+    return {'cat': cat_dict}
 
 
 @database.connection_handler
@@ -55,16 +74,23 @@ def delete_cat_by_id(cursor, id):
 
 @database.connection_handler
 def update_cat_by_id(cursor, json_of_cat_update, id):
+    cat_data = copy.deepcopy(json_of_cat_update)
+    cat_data["id"] = id
     cursor.execute("""
                     UPDATE cats
                     SET name = %(name)s, age = %(age)s, color = %(color)s
                     WHERE id = %(id)s
                     RETURNING *;
                     """,
-                   {"name": json_of_cat_update["name"],
-                    "age": json_of_cat_update["age"],
-                    "color": json_of_cat_update["color"],
-                    "id": id})
+                   cat_data)
 
     return_value = cursor.fetchone()
-    return return_value
+
+    cat_dict = {
+        "id": return_value[0],
+        "name": return_value[1],
+        "age": return_value[2],
+        "color": return_value[3]
+    }
+
+    return {'cat': cat_dict}
