@@ -1,7 +1,6 @@
 import os
 
 import psycopg2
-from psycopg2 import extras
 
 
 def create_connection_string():
@@ -31,16 +30,14 @@ def open_database():
     return connection
 
 
-# implement with with
-
 def connection_handler(function_to_wrap):
     def wrapper(*args, **kwargs):
-        connection = open_database()
-
-        cursor = connection.cursor(cursor_factory=extras.RealDictCursor)
 
         try:
-            value = function_to_wrap(cursor, *args, **kwargs)
+            with open_database() as connection:
+                with connection.cursor() as cursor:
+                    value = function_to_wrap(cursor, *args, **kwargs)
+
         finally:
             cursor.close()
             connection.close()
