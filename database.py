@@ -7,13 +7,24 @@ def create_connection_string():
     db_user_name = os.environ.get("POSTGRES_USER")
     db_password = os.environ.get("POSTGRES_PASSWORD")
     db_database_name = os.environ.get("POSTGRES_DB")
-    db_host = os.environ.get("POSTGRES_HOST")
-    db_port = os.environ.get("POSTGRES_PORT")
+    db_host = os.environ.get("POSTGRES_HOST", "database")
+    db_port = os.environ.get("POSTGRES_PORT", 5432)
 
-    defined_variables = all([db_user_name, db_password, db_host, db_port, db_database_name])
+    missing_variables = []
 
-    if not defined_variables:
-        raise KeyError("Needed variable not defined")
+    if not db_user_name:
+        missing_variables.append("POSTGRES_USER")
+    if not db_password:
+        missing_variables.append("POSTGRES_PASSWORD")
+    if not db_database_name:
+        missing_variables.append("POSTGRES_DB")
+    if not db_host:
+        missing_variables.append("POSTGRES_HOST")
+    if not db_port:
+        missing_variables.append("POSTGRES_PORT")
+
+    if missing_variables:
+        raise KeyError(f"The following variables are missing: {', '.join(missing_variables)}")
 
     return f"postgresql://{db_user_name}:{db_password}@{db_host}:{db_port}/{db_database_name}"
 
