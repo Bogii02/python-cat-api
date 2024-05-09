@@ -20,7 +20,7 @@ def create_cat():
         abort(400, 'Missing required field')
 
     elif not response_validation.check_unexpected_field_not_in_response(data):
-        abort(400, f'Unexpected field')
+        abort(400, 'Unexpected field')
     else:
         cat = data_manager.create_cat(data)
         return jsonify(cat), 201
@@ -74,4 +74,4 @@ def update_cat(id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')
