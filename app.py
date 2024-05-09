@@ -14,7 +14,6 @@ def hello():
 @app.route('/api/cats', methods=['POST'])
 def create_cat():
     data = request.json
-    data_manager.create_db_table_if_not_exists()
 
     if not response_validation.check_field_is_in_response(data):
         abort(400, 'Missing required field')
