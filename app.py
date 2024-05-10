@@ -1,12 +1,9 @@
-import werkzeug.exceptions
 from flask import Flask, jsonify, request, abort
 
 import data_manager
-import utils
+import response_validation
 
 app = Flask(__name__)
-
-FIELDS = ('name', 'age', 'color')
 
 
 @app.route('/')
@@ -18,18 +15,14 @@ def hello():
 def create_cat():
     data = request.json
 
-    for key in FIELDS:
-        if key not in data:
-            abort(400, f'Missing required field: {key}')
+    if not response_validation.check_field_is_in_response(data):
+        abort(400, 'Missing required field')
 
-    for key in data.keys():
-        if key not in FIELDS:
-            abort(400, f'Unexpected field: {key}')
-
-    data_manager.create_db_table()
-    cat = data_manager.create_cat(data)
-
-    return jsonify(cat), 201
+    elif not response_validation.check_unexpected_field_not_in_response(data):
+        abort(400, 'Unexpected field')
+    else:
+        cat = data_manager.create_cat(data)
+        return jsonify(cat), 201
 
 
 @app.route('/api/cats')
@@ -42,10 +35,10 @@ def get_all_cats():
 def delete_one_cat_by_id(id):
     cat = data_manager.get_cat_by_id(id)
 
-    if cat is None:
-        abort(404, f'Cat with id: {id} was not found')
-    else:
+    if response_validation.check_cat_exists(cat):
         data_manager.delete_cat_by_id(id)
+    else:
+        abort(404, f'Cat with id: {id} was not found')
 
     return '', 204
 
@@ -54,10 +47,10 @@ def delete_one_cat_by_id(id):
 def get_one_cat_by_id(id):
     cat = data_manager.get_cat_by_id(id)
 
-    if cat is None:
+    if response_validation.check_cat_exists(cat):
+        return jsonify(cat), 200
+    else:
         abort(404, f'Cat with id: {id} was not found')
-
-    return jsonify(cat), 200
 
 
 @app.route('/api/cats/<int:id>', methods=['PATCH'])
@@ -65,39 +58,19 @@ def update_cat(id):
     cat = data_manager.get_cat_by_id(id)
     data = request.json
 
-    for key in data.keys():
-        if key not in FIELDS:
-            abort(400, f'Unexpected field: {key}')
+    if not response_validation.check_field_is_in_response(data):
+        abort(400, 'Missing required field')
 
-    for key in FIELDS:
-        if key not in data:
-            abort(400, f'Missing required field: {key}')
+    elif not response_validation.check_unexpected_field_not_in_response(data):
+        abort(400, f'Unexpected field')
 
-    if cat is None:
+    elif not response_validation.check_cat_exists(cat):
         abort(404, f'Cat with id: {id} was not found')
-    else:
-        updated_cat = data_manager.update_cat_by_id(data, id)
+
+    updated_cat = data_manager.update_cat_by_id(data, id)
 
     return jsonify(updated_cat), 200
 
 
-@app.errorhandler(werkzeug.exceptions.BadRequest)
-def handle_bad_request_error(error):
-    response_body = utils.create_error_message("invalid input", error)
-    return response_body, 400
-
-
-@app.errorhandler(werkzeug.exceptions.NotFound)
-def handle_not_found_error(error):
-    response_body = utils.create_error_message("data could not be found", error)
-    return response_body, 404
-
-
-@app.errorhandler(werkzeug.exceptions.InternalServerError)
-def handle_internal_server_error(error):
-    response_body = utils.create_error_message("failed to establish a connection with the database", error)
-    return response_body, 500
-
-
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')

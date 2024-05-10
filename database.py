@@ -1,21 +1,32 @@
 import os
 
 import psycopg2
-from psycopg2 import extras
 
 
 def create_connection_string():
-    db_user_name = os.environ.get("PSQL_USER_NAME")
-    db_password = os.environ.get("PSQL_PASSWORD")
-    db_host = os.environ.get("PSQL_HOST")
-    db_database_name = os.environ.get("PSQL_DB_NAME")
+    db_user_name = os.environ.get("POSTGRES_USER")
+    db_password = os.environ.get("POSTGRES_PASSWORD")
+    db_database_name = os.environ.get("POSTGRES_DB")
+    db_host = os.environ.get("POSTGRES_HOST", "database")
+    db_port = os.environ.get("POSTGRES_PORT", 5432)
 
-    defined_variables = all([db_user_name, db_password, db_host, db_database_name])
+    missing_variables = []
 
-    if not defined_variables:
-        raise KeyError("Needed variable not defined")
+    if not db_user_name:
+        missing_variables.append("POSTGRES_USER")
+    if not db_password:
+        missing_variables.append("POSTGRES_PASSWORD")
+    if not db_database_name:
+        missing_variables.append("POSTGRES_DB")
+    if not db_host:
+        missing_variables.append("POSTGRES_HOST")
+    if not db_port:
+        missing_variables.append("POSTGRES_PORT")
 
-    return f"postgresql://{db_user_name}:{db_password}@{db_host}/{db_database_name}"
+    if missing_variables:
+        raise KeyError(f"The following variables are missing: {', '.join(missing_variables)}")
+
+    return f"postgresql://{db_user_name}:{db_password}@{db_host}:{db_port}/{db_database_name}"
 
 
 def open_database():
@@ -32,12 +43,12 @@ def open_database():
 
 def connection_handler(function_to_wrap):
     def wrapper(*args, **kwargs):
-        connection = open_database()
-
-        cursor = connection.cursor(cursor_factory=extras.RealDictCursor)
 
         try:
-            value = function_to_wrap(cursor, *args, **kwargs)
+            with open_database() as connection:
+                with connection.cursor() as cursor:
+                    value = function_to_wrap(cursor, *args, **kwargs)
+
         finally:
             cursor.close()
             connection.close()
