@@ -4,7 +4,7 @@
 <br />
 <div align="center">
 
-  <h3 align="center">MERN APP</h3> 
+  <h3 align="center">CAT-API</h3> 
 </div>
 
 <!-- TABLE OF CONTENTS -->
@@ -19,7 +19,7 @@
     </li>
     <li>
       <a href="#getting-started">Getting Started</a>
-      <ul>        
+      <ul>
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
@@ -32,7 +32,7 @@
 
 ## About The Project
 
-This project provides a backend service for managing cats through a RESTful API. You can perform various operations like fetching all cats, creating a new cat, deleting a cat, and updating cat information.
+This project provides a backend service for managing cats through a RESTful API. You can perform various operations like fetching all cats, creating a new cat, deleting a cat, and updating cat information. This backend is made for API testing, which you can check here: <h2>https://github.com/Bogii02/python-cat-api-test</h2>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -61,14 +61,17 @@ To get started with the Cat API backend, follow these steps:
    ```sh
    git clone git@github.com:Bogii02/python-cat-api.git
    ```
-2. Change .env.sample file name to .env.
+2. Change directory to python-cat-api
+   ```sh
+   cd python-cat-api
+   ```
+3. Change .env.sample file name to .env.
    ```sh
    mv .env.sample .env
    ```
-3. Fill out .env file with necessary data.
+4. Fill out .env file with necessary data.
 
-
-4. Start the project
+5. Start the project
    ```sh
    docker compose up --build
    ```
