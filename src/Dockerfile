@@ -2,12 +2,12 @@ FROM python:3.12.0
 
 WORKDIR /app
 
-COPY requirements.txt .
+COPY ../requirements.txt .
 
 RUN pip install -r requirements.txt
 
-COPY .. .
+COPY ../.. .
 
 EXPOSE 5000
 
-CMD ["python", "app.py"]
+CMD ["python", "./src/app.py"]
