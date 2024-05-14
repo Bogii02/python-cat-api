@@ -2,31 +2,6 @@
 
 <!-- PROJECT LOGO -->
 <br />
-<div align="center">
-
-  <h3 align="center">CAT-API</h3> 
-</div>
-
-<!-- TABLE OF CONTENTS -->
-<details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#features">Features</a></li>
-    <li><a href="#contact">Contact</a></li>    
-  </ol>
-</details>
 
 <!-- ABOUT THE PROJECT -->
 
@@ -44,7 +19,6 @@ The following technologies were used during the project:
 * [![Flask][Flask]][Flask-url]
 * [![Postgresql][Postgres]][Postgres-url]
 * [![Docker][Docker]][Docker-url]
-
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -69,9 +43,9 @@ To get started with the Cat API backend, follow these steps:
    ```sh
    mv .env.sample .env
    ```
-4. Fill out .env file with necessary data.
+4. Fill out .env file with necessary data. Port number can be the default postgres port (***5432***).
 
-5. Start the project
+5. Start the project.
    ```sh
    docker compose up --build
    ```
