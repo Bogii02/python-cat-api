@@ -4,10 +4,11 @@ import psycopg2
 
 
 def create_connection_string():
-    db_user_name = os.environ.get("POSTGRES_USER")
-    db_password = os.environ.get("POSTGRES_PASSWORD")
-    db_database_name = os.environ.get("POSTGRES_DB")
-    db_port = os.environ.get("POSTGRES_PORT")
+    db_user_name = os.getenv("POSTGRES_USER")
+    db_password = os.getenv("POSTGRES_PASSWORD")
+    db_database_name = os.getenv("POSTGRES_DB")
+    db_host = os.getenv("POSTGRES_HOST")
+    db_port = os.getenv("POSTGRES_PORT", "5432")
 
     missing_variables = []
 
@@ -17,13 +18,15 @@ def create_connection_string():
         missing_variables.append("POSTGRES_PASSWORD")
     if not db_database_name:
         missing_variables.append("POSTGRES_DB")
-    if not db_port:
-        missing_variables.append("POSTGRES_PORT")
+    if not db_host:
+        missing_variables.append("POSTGRES_HOST")
+    if not db_port.isdigit():
+        missing_variables.append("POSTGRES_PORT (must be an integer)")
 
     if missing_variables:
-        raise KeyError(f"The following variables are missing: {', '.join(missing_variables)}")
+        raise KeyError(f"The following environment variables are missing or invalid: {', '.join(missing_variables)}")
 
-    return f"postgresql://{db_user_name}:{db_password}@database:{db_port}/{db_database_name}"
+    return f"postgresql://{db_user_name}:{db_password}@{db_host}:{db_port}/{db_database_name}"
 
 
 def open_database():
