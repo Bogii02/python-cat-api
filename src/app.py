@@ -22,7 +22,7 @@ db = SQLAlchemy(app)
 
 @app.route('/')
 def hello():
-    return 'Welcome here!'
+    return 'Welcome here! You can check my project here: https://github.com/Bogii02/python-cat-api/tree/feature/deploy'
 
 
 @app.route('/api/cats', methods=['POST'])
