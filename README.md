@@ -7,9 +7,8 @@
 
 ## About The Project
 
-This project provides a backend service for managing cats through a RESTful API. You can perform various operations like fetching all cats, creating a new cat, deleting a cat, and updating cat information. This backend is made for API testing, which you can check here: <h2>https://github.com/Bogii02/python-cat-api-test</h2>
+This project provides a backend service for managing cats through a RESTful API. You can perform various operations like fetching all cats, creating a new cat, deleting a cat, and updating cat information. You can check here the API testing project: <h2>https://github.com/Bogii02/python-cat-api-test</h2>
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Built With
 
@@ -19,9 +18,19 @@ The following technologies were used during the project:
 * [![Flask][Flask]][Flask-url]
 * [![Postgresql][Postgres]][Postgres-url]
 * [![Docker][Docker]][Docker-url]
+* [![Postman][Postman]][Postman-url]
 
+<h3>If you want to try out the endpoints of this project, I recommend using Postman.</h3>
+**If you want to send, delete, or update a cat, you'll need to use a JSON structure with fields like name, age, and color.**
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<h3><code>
+   {
+   <span style="color:#D009F6">"name":</span> <span style="color:#2FF609">"Example"</span>,
+   <span style="color:#D009F6">"age":</span> <span style="color:#2FF609">10</span>,
+   <span style="color:#D009F6">"color":</span> <span style="color:#2FF609">"example"</span>
+   }
+</code><h3>
+
 
 <!-- GETTING STARTED -->
 
@@ -50,8 +59,6 @@ To get started with the Cat API backend, follow these steps:
    docker compose up --build
    ```
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 <!-- FEATURES -->
 
 ## API Endpoints
@@ -76,8 +83,6 @@ Boglárka Bakos - [@Boglárka Bakos_LinkedIn](https://linkedin.com/in/boglarka-b
 
 Project Link: [https://github.com/Bogii02/python-cat-api](https://github.com/Bogii02/python-cat-api)
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 [Python]: https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54
 [Python-url]: https://www.python.org
@@ -90,3 +95,6 @@ Project Link: [https://github.com/Bogii02/python-cat-api](https://github.com/Bog
 
 [Docker]: https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white
 [Docker-url]: https://www.docker.com
+
+[Postman]: https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white
+[Postman-url]: https://www.postman.com
