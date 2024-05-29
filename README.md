@@ -5,7 +5,7 @@
 
 <!-- ABOUT THE PROJECT -->
 
-## About The Projectű
+## About The Project
 
 <h3>This project provides a backend service for managing cats through a RESTful API. You can perform various operations like fetching all cats, creating a new cat, deleting a cat, and updating cat information.</h3>
 <h3>Check here for the API testing project: https://github.com/Bogii02/python-cat-api-test</h3>
@@ -20,7 +20,7 @@ The following technologies were used during the project:
 * [![Postgresql][Postgres]][Postgres-url]
 * [![Docker][Docker]][Docker-url]
 * [![Postman][Postman]][Postman-url]
-* 
+
 <h3>If you want to try out the endpoints of this project, I recommend using Postman.</h3>
 <h3>If you want to send, delete, or update a cat, you'll need to use a JSON structure with fields like name, age, and color.</h3>
 
