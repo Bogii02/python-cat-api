@@ -1,4 +1,3 @@
-
 FIELDS = ('name', 'age', 'color')
 
 
