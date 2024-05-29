@@ -1,16 +1,6 @@
 import copy
 import database
 
-# execute method avoids sql injection
-
-
-@database.connection_handler
-def create_db_table_if_not_exists(cursor):
-    cursor.execute("""
-                    CREATE TABLE IF NOT EXISTS cats
-                        (id SERIAL PRIMARY KEY, name VARCHAR(50), age INTEGER, color VARCHAR(50));
-                    """)
-
 
 @database.connection_handler
 def create_cat(cursor, json_of_cat):
@@ -72,10 +62,6 @@ def delete_cat_by_id(cursor, id):
                     WHERE id = %(id)s;
                     """,
                    {"id": id})
-
-
-# **dictionary unpacking
-# dictionary comprehension
 
 
 @database.connection_handler
