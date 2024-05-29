@@ -8,9 +8,8 @@
 ## About The Project
 
 # This API is available here: [https://python-cat-api.onrender.com](https://python-cat-api.onrender.com)
-<h2>This project provides a backend service for managing cats through a RESTful API.</h2>
-<h2>You can perform various operations like fetching all cats, creating a new cat, deleting a cat, and updating cat information.</h2>
-<h2>You can check here the API testing project: https://github.com/Bogii02/python-cat-api-test</h2>
+<h3>This project provides a backend service for managing cats through a RESTful API. You can perform various operations like fetching all cats, creating a new cat, deleting a cat, and updating cat information.</h3>
+<h3>Check here for the API testing project: https://github.com/Bogii02/python-cat-api-test</h3>
 
 
 ### Built With
@@ -28,14 +27,13 @@ The following technologies were used during the project:
 ## Getting Started
 
 <h3>If you want to try out the endpoints of this project, I recommend using Postman.</h3>
-**If you want to send, delete, or update a cat, you'll need to use a JSON structure with fields like name, age, and color.**
+<h3>If you want to send, delete, or update a cat, you'll need to use a JSON structure with fields like name, age, and color.</h3>
 
-<h3><code>
-   {
+<h3><code>{
    <span style="color:#D009F6">"name":</span> <span style="color:#2FF609">"Example"</span>,
    <span style="color:#D009F6">"age":</span> <span style="color:#2FF609">10</span>,
    <span style="color:#D009F6">"color":</span> <span style="color:#2FF609">"example"</span>
-   }
+}
 </code><h3>
 
 <!-- FEATURES -->
